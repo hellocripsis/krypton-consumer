@@ -1,17 +1,17 @@
 # krypton-consumer
 
-Tiny Rust binary that demonstrates how to use
+Small Rust binary that shows how to use
 [`entropy-krypton-core`](https://github.com/hellocripsis/entropy-sentry-core)
 as a job policy engine.
 
-It:
+What it does:
 
-- Depends on `entropy-krypton-core` via a local path.
-- Builds a `SentryEngine` with a simple config.
+- Depends on `entropy-krypton-core` as a local library.
+- Builds a `SentryEngine` with simple thresholds.
 - Feeds in fake telemetry for a single job (`job-42`).
-- Prints the decision: Keep / Throttle / Kill, plus the action.
+- Prints a decision: `Keep`, `Throttle`, or `Kill`, plus the suggested action.
 
-Run:
+Run it:
 
 ```bash
 cargo run
