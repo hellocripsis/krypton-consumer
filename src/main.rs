@@ -1,22 +1,35 @@
-use entropy_krypton_core::{SentryConfig, SentryDecision, SentryEngine, SentrySignals};
+use entropy_krypton_core::{
+    EntropyMetrics,
+    SentryConfig,
+    SentryEngine,
+    SentrySignals,
+    SentryDecision,
+};
 
 fn main() {
-    // 1) Configure Krypton: how strict we are
-    let config = SentryConfig {
-        max_entropy_score: 2.0,
-        soft_excess_factor: 1.0,
-        hard_excess_factor: 1.5,
-    };
+    // Fake some samples like you'd get from telemetry:
+    //   - positive / negative deltas, a bit noisy
+    let samples = vec![0.05, -0.02, 0.04, 0.01, -0.03, 0.02];
+
+    // Turn raw samples into entropy-style metrics.
+    let metrics = EntropyMetrics::from_samples(&samples);
+
+    // Map Krypton's metrics into the scores the sentry uses.
+    let entropy_score = metrics.variance; // treat variance as "entropy-ish"
+    let jitter_score = metrics.jitter;
+    let load_score = 0.7; // fake load for the demo
+
+    let signals = SentrySignals::from_raw(
+    entropy_score,
+    jitter_score,
+    load_score,
+    );
+
+    // Use the default config for Krypton.
+    let config = SentryConfig::default();
     let engine = SentryEngine::new(config);
 
-    // 2) Pretend these came from telemetry (latency/jitter/load)
-    let entropy_score = 0.6;
-    let jitter_score = 0.4;
-    let load_score = 0.7;
-
-    let signals = SentrySignals::from_raw(entropy_score, jitter_score, load_score);
-
-    // 3) Ask Krypton what to do
+    // Ask Krypton what to do with this job.
     let decision = engine.decide("job-42", &signals);
 
     println!("Krypton decision for job-42: {:?}", decision);
@@ -26,10 +39,10 @@ fn main() {
             println!("Action: let it run normally");
         }
         SentryDecision::Throttle => {
-            println!("Action: slow it down / reduce concurrency");
+            println!("Action: slow it down / backoff");
         }
         SentryDecision::Kill => {
-            println!("Action: terminate or quarantine this job");
+            println!("Action: kill or reschedule this job");
         }
     }
 }
