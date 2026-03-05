@@ -4,4 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-entropy-krypton-core = { path = "../entropy-krypton-core" }
+krypton-entropy-core = { git = "https://github.com/hellocripsis/krypton-entropy-core.git", tag = "v0.1.0" }
+rand = "0.8"
+serde_json = "1"
