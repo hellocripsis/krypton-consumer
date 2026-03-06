@@ -46,3 +46,13 @@ cargo run -- --samples 3 --format json
 
 This binary is for demo / observability only. All entropy and decisions
 come from `krypton-entropy-core` using `OsRng` as the sole entropy source.
+
+---
+
+## Requirements
+
+[Rust](https://rustup.rs) stable toolchain **1.70 or later** is required.
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
